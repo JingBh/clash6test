@@ -10,6 +10,7 @@ from clash import Clash
 from profiles import PROXY_PORT
 
 
+# Reference: https://stackoverflow.com/a/49986645/18176440
 def remove_emojis(text: str) -> str:
     regrex_pattern = re.compile("["
                                 "\U0001F600-\U0001F64F"  # emoticons
