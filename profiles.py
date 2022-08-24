@@ -13,7 +13,8 @@ BASE_PROFILE = {
     'log-level': 'warning',
     'ipv6': True,
     'external-controller': f'localhost:57899',
-    'dns': {'enable': False}
+    'dns': {'enable': False},
+    'proxies': []
 }
 
 
@@ -40,10 +41,14 @@ def choose_profile() -> Path:
 
 def build_profile(profile_path: Path = choose_profile()) -> Path:
     profile = deepcopy(BASE_PROFILE)
-    user_profile = yaml.safe_load(profile_path.open('r', encoding='utf-8'))
-    for key in ['proxies', 'proxy-providers']:
-        if key in user_profile:
-            profile[key] = user_profile[key]
+    user_profile: dict = yaml.safe_load(profile_path.open('r', encoding='utf-8'))
+
+    for proxy in user_profile.get('proxies', []):
+        if proxy['port'] <= 1:
+            # Not really a node
+            continue
+
+        profile['proxies'].append(proxy)
 
     file = NamedTemporaryFile('w', encoding='utf-8', suffix='.yml', delete=False)
     yaml.dump(profile, file, allow_unicode=True, sort_keys=False)
