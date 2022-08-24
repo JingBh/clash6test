@@ -5,15 +5,14 @@ from tempfile import NamedTemporaryFile
 import yaml
 from InquirerPy import inquirer
 
-PROXY_PORT = 57890
-CONTROLLER_PORT = 57899
 BASE_PROFILE = {
-    'mixed-port': PROXY_PORT,
+    'port': 57890,
+    'socks-port': 57891,
     'allow-lan': False,
     'mode': 'global',
     'log-level': 'warning',
     'ipv6': True,
-    'external-controller': f'localhost:{CONTROLLER_PORT}',
+    'external-controller': f'localhost:57899',
     'dns': {'enable': False}
 }
 

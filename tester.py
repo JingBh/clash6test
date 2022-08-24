@@ -7,7 +7,7 @@ from rich.table import Table
 
 from console import console
 from clash import Clash
-from profiles import PROXY_PORT
+from profiles import BASE_PROFILE
 
 
 # Reference: https://stackoverflow.com/a/49986645/18176440
@@ -58,7 +58,7 @@ class Tester:
             response = requests.get(f'https://api-{ip_type}.ip.sb/ip', headers={
                 'User-Agent': 'Mozilla'  # otherwise it returns 403
             }, proxies={
-                'all': f'socks5://localhost:{PROXY_PORT}'
+                'all': f'socks5://localhost:{BASE_PROFILE["socks-port"]}'
             }, timeout=5)
         except requests.RequestException:
             return None

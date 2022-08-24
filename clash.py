@@ -5,7 +5,7 @@ from typing import List
 import requests
 
 from console import console
-from profiles import CONTROLLER_PORT
+from profiles import BASE_PROFILE
 
 
 class Clash:
@@ -21,26 +21,26 @@ class Clash:
         )
 
         try:
-            requests.get(f'http://localhost:{CONTROLLER_PORT}').raise_for_status()
+            requests.get(Clash.build_control_url()).raise_for_status()
         except requests.RequestException:
             raise RuntimeError('Clash server not properly started.')
         console.log('Clash server started.')
         self.started = True
 
     def get_proxies(self):
-        response = requests.get(f'http://localhost:{CONTROLLER_PORT}/proxies/GLOBAL')
+        response = requests.get(Clash.build_control_url('proxies/GLOBAL'))
         proxies: List[str] = response.json()['all']
         for i in ['DIRECT', 'REJECT']:
             proxies.remove(i)
         return proxies
 
     def set_proxy(self, proxy: str, close_connections=True):
-        requests.put(f'http://localhost:{CONTROLLER_PORT}/proxies/GLOBAL', json={
+        requests.put(Clash.build_control_url('proxies/GLOBAL'), json={
             'name': proxy
         })
 
         if close_connections:
-            requests.delete(f'http://localhost:{CONTROLLER_PORT}/connections')
+            requests.delete(Clash.build_control_url('connections'))
 
     def stop(self):
         if self.started:
@@ -51,6 +51,15 @@ class Clash:
 
     def __del__(self):
         self.stop()
+
+    @staticmethod
+    def build_control_url(path: str = '/') -> str:
+        url = 'http://'
+        url += BASE_PROFILE['external-controller']
+        if path[0] != '/':
+            url += '/'
+        url += path
+        return url
 
     @staticmethod
     def get_executable() -> Path:
