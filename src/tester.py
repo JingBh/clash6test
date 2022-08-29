@@ -5,9 +5,9 @@ import requests
 from rich.live import Live
 from rich.table import Table
 
-from console import console
-from clash import Clash
-from profiles import BASE_PROFILE
+from .console import console
+from .clash import Clash
+from .profiles import BASE_PROFILE
 
 
 # Reference: https://stackoverflow.com/a/49986645/18176440

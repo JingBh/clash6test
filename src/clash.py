@@ -4,8 +4,8 @@ from typing import List
 
 import requests
 
-from console import console
-from profiles import BASE_PROFILE
+from .console import console
+from .profiles import BASE_PROFILE
 
 
 class Clash:
@@ -63,7 +63,7 @@ class Clash:
 
     @staticmethod
     def get_executable() -> Path:
-        lib_dir = Path(__file__).parent / 'lib'
+        lib_dir = Path(__file__).parent.parent / 'lib'
         for file in lib_dir.iterdir():
             if file.is_file() and file.name.startswith('clash'):
                 exe_path = file.resolve()
