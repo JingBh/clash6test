@@ -16,6 +16,9 @@ class OutputQueue:
         self.queue: List[Tuple[str, Optional[str], Optional[str]]] = []
         console.log(f'{len(proxies)} proxy nodes loaded.', style='green bold')
 
+        # console.print('Test started, please wait...')
+        # console.print('Name\tIPv4\tIPv6', style='bold')
+
         self.table = Table(title='Test Result')
         self.table.add_column('Name', justify='right', style='cyan', no_wrap=True)
         self.table.add_column('IPv4', no_wrap=True)
@@ -40,7 +43,12 @@ class OutputQueue:
                         '[red]✗ Timeout' if ip6 is None else f'[green]✓ {ip6}'
                     )
                     self.live.refresh()
+                    # console.print(
+                    #     f'[cyan]{remove_emojis(proxy)}\t'
+                    #     '[red]✗ Timeout' if ip4 is None else f'[green]✓ {ip4}\t'
+                    #     '[red]✗ Timeout' if ip6 is None else f'[green]✓ {ip6}'
+                    # )
                     self.displayed.append(proxy)
-                break
+                    break
             else:
                 break

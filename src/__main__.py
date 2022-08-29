@@ -1,16 +1,42 @@
-from .clash import Clash
+import asyncio
+
+import nest_asyncio
+
+from .clash import ClashPool, choose_profile
+from .console import console, OutputQueue
 from .tester import Tester
-from .profiles import build_profile
+
+nest_asyncio.apply()
 
 
-def start():
-    profile_path = build_profile()
-    clash_instance = Clash(profile_path)
-    tester_instance = Tester(clash_instance)
-    tester_instance()
+async def test_proxy(pool: ClashPool, proxy: str, output: OutputQueue):
+    proxies_config = pool.make_proxy(proxy)
+    tester = Tester(proxies_config)
+    result = await asyncio.gather(
+        asyncio.to_thread(tester.get_ip, 'ipv4'),
+        asyncio.to_thread(tester.get_ip, 'ipv6')
+    )
+    output.add(proxy, *result)
 
-    # cleanup
-    clash_instance.stop()
+
+async def start():
+    console.log('Warning: This script does not work when system proxy is on.', style='yellow bold')
+
+    user_profile = choose_profile()
+    pool = ClashPool(user_profile)
+    proxies = pool.get_proxies()
+    output = OutputQueue(proxies)
+
+    with output.live:
+        tasks = set()
+
+        for proxy in proxies:
+            task = asyncio.create_task(test_proxy(pool, proxy, output))
+            tasks.add(task)
+            task.add_done_callback(tasks.discard)
+            await asyncio.sleep(0.5)
+
+        await asyncio.wait(tasks)
 
 
-start()
+asyncio.run(start())

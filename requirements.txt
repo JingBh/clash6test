@@ -1,3 +1,4 @@
+nest-asyncio
 requests[socks]
 PyYAML
 InquirerPy
